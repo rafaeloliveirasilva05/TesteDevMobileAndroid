@@ -1,0 +1,108 @@
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="4dp"
+    android:layout_marginTop="4dp"
+    app:cardElevation="3dp"
+    app:cardUseCompatPadding="false"
+    app:cardPreventCornerOverlap="true">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/item_foto"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:padding="5dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/btnNome"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:onClick="carregarLista"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            android:textColor="#DE000000"
+            android:textSize="24sp"
+            app:layout_constraintStart_toEndOf="@+id/item_foto"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/objetivo"
+            android:layout_width="0dp"
+            android:layout_height="23dp"
+            android:layout_below="@+id/action_button_2"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="40dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            android:textColor="#8A000000"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/item_foto"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/person_photo"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintDimensionRatio="H,16:9"
+            android:layout_below="@+id/objetivo"
+            android:layout_marginTop="12dp"
+            android:scaleType="centerCrop"
+            android:src="@null"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/item_foto" />
+
+        <TextView
+            android:id="@+id/data_refeicao"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:textColor="@color/colorPrimary"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/person_photo"
+            android:layout_marginLeft="16dp" />
+
+        <TextView
+            android:id="@+id/kcal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="16dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:textColor="@color/colorPrimary"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/data_refeicao" />
+
+        <ImageButton
+            android:id="@+id/btnCurtir"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="16dp"
+            android:background="#00FFFFFF"
+            android:padding="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/person_photo"
+
+            tools:ignore="VectorDrawableCompat"
+            android:layout_marginRight="16dp" />
+
+    </android.support.constraint.ConstraintLayout>
+</android.support.v7.widget.CardView>
+
+    <!--app:srcCompat="@drawable/ic_action_curtir"-->

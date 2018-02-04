@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">TesteDevMobileAndroid</string>
+    <string name="diaRefeicao">Refeição de </string>
+    <string name="totalConsumido">Total consumido</string>
+    <string name="kcal">Kcal </string>
+
+    <string name="cal">Calorias</string>
+    <string name="carb">Carb</string>
+    <string name="prot">Proteínas</string>
+    <string name="gord">Gorduras</string>
+    <string name="gramas">g</string>
+
+</resources>

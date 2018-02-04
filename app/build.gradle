@@ -1,0 +1,57 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 26
+    flavorDimensions "versionCode"
+    defaultConfig {
+        applicationId "com.example.rafael.testedevmobileandroid"
+        minSdkVersion 19
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    productFlavors {
+        corCiano {
+        }
+        corLaranja {
+        }
+    }
+}
+
+repositories {
+    // ... other project repositories
+    jcenter() // includes the MoPub SDK and AVID library
+    maven { url "https://s3.amazonaws.com/moat-sdk-builds" }
+    maven { url 'https://maven.google.com' } // necessary for Android API 26
+}
+dependencies {
+    implementation 'com.google.firebase:firebase-config:11.0.4'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    compile 'com.android.support:recyclerview-v7:26.+'
+    compile 'com.android.support:cardview-v7:26.+'
+    compile 'com.android.support:design:26.+'
+    compile 'com.squareup.retrofit2:retrofit:2.3.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'de.hdodenhof:circleimageview:2.1.0'
+    compile 'org.greenrobot:eventbus:3.1.1'
+    compile 'com.mopub.volley:mopub-volley:1.1.0'
+    // For banners
+    compile('com.mopub:mopub-sdk-banner:4.16.0@aar') {
+        transitive = true
+    }
+}
+
+apply plugin: 'com.google.gms.google-services'
