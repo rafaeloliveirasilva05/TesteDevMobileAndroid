@@ -1,13 +1,18 @@
 <resources>
-    <string name="app_name">TesteDevMobileAndroid</string>
-    <string name="diaRefeicao">Meal of  </string>
+    <string name="app_name">Tecnonutri</string>
+    <string name="feed">Tecnonutri Feed</string>
+    <string name="semInternet">No Internet connection</string>
+    <string name="erroEndpoint">Could not load feed</string>
+    <string name="fechar">Close</string>
+
+    <string name="diaRefeicao">Meal of</string>
     <string name="totalConsumido">Total consumed</string>
-    <string name="kcal">Kcal </string>
+    <string name="kcal">Kcal</string>
 
     <string name="cal">Calories</string>
     <string name="carb">Carb</string>
-    <string name="prot">Protein</string>
-    <string name="gord">Fat</string>
-    <string name="gramas">g </string>
+    <string name="prot">Proteins</string>
+    <string name="gord">Fats</string>
+    <string name="gramas">g</string>
 
 </resources>

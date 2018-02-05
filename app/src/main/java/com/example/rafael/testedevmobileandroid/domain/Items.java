@@ -2,6 +2,7 @@ package com.example.rafael.testedevmobileandroid.domain;
 
 import java.io.Serializable;
 
+
 /**
  * Created by rafael on 25/01/18.
  */
@@ -25,7 +26,6 @@ public class Items implements Serializable{
     public Profile getProfile() {
         return profile;
     }
-
     public String getImage() {
         return image;
     }
@@ -45,7 +45,6 @@ public class Items implements Serializable{
     public String getFeedHash() {
         return feedHash;
     }
-
 
     public boolean isCurtiu() {
         return curtiu;

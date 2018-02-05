@@ -22,7 +22,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/diaRefeicao"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/colorSecondytext"
                 android:textSize="24dp"/>
 
             <TextView
@@ -31,7 +31,7 @@
                 android:layout_height="wrap_content"
                 android:text="text"
                 android:layout_marginLeft="8dp"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/colorSecondytext"
                 android:textSize="24dp"/>
 
         </LinearLayout>
@@ -320,5 +320,15 @@
         </android.support.constraint.ConstraintLayout>
 
     </ScrollView>
+
+    <com.mopub.mobileads.MoPubView
+        android:id="@+id/adview"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </RelativeLayout>

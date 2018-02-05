@@ -7,14 +7,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
-import com.example.rafael.testedevmobileandroid.HelloWorldEvent;
+import com.example.rafael.testedevmobileandroid.BroadcastCurtidas;
 import com.example.rafael.testedevmobileandroid.MyViewHolder;
 import com.example.rafael.testedevmobileandroid.R;
 import com.example.rafael.testedevmobileandroid.domain.Items;
 import com.example.rafael.testedevmobileandroid.interfaces.ItemClickListener;
-import com.example.rafael.testedevmobileandroid.interfaces.ItemClickListener2;
+import com.example.rafael.testedevmobileandroid.interfaces.ItemClickListenerPostDetalhes;
 import com.squareup.picasso.Picasso;
 
 import org.greenrobot.eventbus.EventBus;
@@ -34,19 +33,19 @@ import java.util.List;
 public class PostAdapter extends RecyclerView.Adapter {
     private Context context;
     private List<Items> itemsList;
+    public int pos;
+
 
     ItemClickListener  itemClickListener;
-    ItemClickListener2 itemClickListener2;
-
-    int pos;
+    ItemClickListenerPostDetalhes itemClickListenerPostDetalhes;
 
     public PostAdapter(List<Items> itemsList, Context context, ItemClickListener itemClickListener,
-                       ItemClickListener2 itemClickListener2){
+                       ItemClickListenerPostDetalhes itemClickListenerPostDetalhes){
 
         this.itemsList = itemsList;
         this.context = context;
         this.itemClickListener  = itemClickListener;
-        this.itemClickListener2 = itemClickListener2;
+        this.itemClickListenerPostDetalhes = itemClickListenerPostDetalhes;
 
         EventBus.getDefault().register(this);
     }
@@ -55,7 +54,7 @@ public class PostAdapter extends RecyclerView.Adapter {
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         View view = LayoutInflater.from(context)
-                .inflate(R.layout.item_card_view2,parent,false);
+                .inflate(R.layout.item_card_view,parent,false);
 
         //Acessa os detalhes da refeição do usuário
         final MyViewHolder holder = new MyViewHolder(view);
@@ -73,7 +72,6 @@ public class PostAdapter extends RecyclerView.Adapter {
 
         final MyViewHolder holder = (MyViewHolder) viewHolder;
 
-
         String dataFormatada = formadaData(itemsList.get(position).getDate());
         DecimalFormat decimalFormat = new DecimalFormat("0");
 
@@ -83,13 +81,11 @@ public class PostAdapter extends RecyclerView.Adapter {
         holder.kcal.setText(decimalFormat.
                 format(Double.parseDouble(itemsList.get(position).getEnergy())));
 
-
         pos = holder.getAdapterPosition();
 
         //Verifica se o post recebeu curtidas
         if(!itemsList.get(position).isCurtiu()){
             holder.botaoCurtir.setImageResource(R.drawable.ic_fav_borda_branca);
-
         }
         else{
             holder.botaoCurtir.setImageResource(R.drawable.ic_fav_branco);
@@ -108,12 +104,11 @@ public class PostAdapter extends RecyclerView.Adapter {
                 .into(((MyViewHolder) viewHolder).imgUsuario);
 
         //Acessa o profile do usuario
-        //TextView button = holder.botaoNome;
         RelativeLayout relativeLayout = holder.relativeLayout;
         relativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                itemClickListener2.onItemClick(view, holder.getAdapterPosition());
+                itemClickListenerPostDetalhes.onItemClick(view, holder.getAdapterPosition());
             }
         });
 
@@ -141,7 +136,7 @@ public class PostAdapter extends RecyclerView.Adapter {
 
     //Broadcast das curtidas
     @Subscribe
-    public void magicSent(HelloWorldEvent event) {
+    public void magicSent(BroadcastCurtidas event) {
 
         for(int i=0;i<itemsList.size();i++){
             if(Long.parseLong(itemsList.get(i).getId()) == Long.parseLong(event.getMessage())){

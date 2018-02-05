@@ -4,11 +4,11 @@ package com.example.rafael.testedevmobileandroid;
  * Created by rafael on 30/01/18.
  */
 
-public class HelloWorldEvent {
+public class BroadcastCurtidas {
     private final String message;
 
 
-    public HelloWorldEvent(String message) {
+    public BroadcastCurtidas(String message) {
         this.message = message;
     }
 

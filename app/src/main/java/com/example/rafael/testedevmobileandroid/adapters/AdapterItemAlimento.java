@@ -1,7 +1,6 @@
 package com.example.rafael.testedevmobileandroid.adapters;
 
 import android.app.Activity;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -44,17 +43,17 @@ public class AdapterItemAlimento extends BaseAdapter {
 
     @Override
     public View getView(int i, View convertView, ViewGroup viewGroup) {
-        View view = act.getLayoutInflater().inflate(R.layout.item_alimento2, viewGroup,false);
+        View view = act.getLayoutInflater().inflate(R.layout.item_alimento, viewGroup,false);
 
         Foods foods = foodsList.get(i);
 
-        TextView nomeAlimento       = view.findViewById(R.id.texNomeRefeicao); // "description"
-        TextView quantidadeDaMedida = view.findViewById(R.id.texQuantidadeDaMedida); // amount
-        TextView unidadeDaMedida    = view.findViewById(R.id.texUnidadeDeMedida); // "measure"
-        TextView quantidadeCal      = view.findViewById(R.id.texCalQuantidade);   //"energy"
-        TextView quantidadeCarb     = view.findViewById(R.id.texCarbQuantidade); //"carbohydrate"
-        TextView quantidadeProt     = view.findViewById(R.id.texProtQuantidade); //"protein"
-        TextView quantidadeGord     = view.findViewById(R.id.texGordQuantidade); //fat
+        TextView nomeAlimento       = view.findViewById(R.id.texNomeRefeicao);
+        TextView quantidadeDaMedida = view.findViewById(R.id.texQuantidadeDaMedida);
+        TextView unidadeDaMedida    = view.findViewById(R.id.texUnidadeDeMedida);
+        TextView quantidadeCal      = view.findViewById(R.id.texCalQuantidade);
+        TextView quantidadeCarb     = view.findViewById(R.id.texCarbQuantidade);
+        TextView quantidadeProt     = view.findViewById(R.id.texProtQuantidade);
+        TextView quantidadeGord     = view.findViewById(R.id.texGordQuantidade);
 
         DecimalFormat decimalFormat = new DecimalFormat("0");
 

@@ -20,7 +20,7 @@ import com.example.rafael.testedevmobileandroid.adapters.PostAdapter;
 import com.example.rafael.testedevmobileandroid.api.PostService;
 import com.example.rafael.testedevmobileandroid.domain.Post;
 import com.example.rafael.testedevmobileandroid.interfaces.ItemClickListener;
-import com.example.rafael.testedevmobileandroid.interfaces.ItemClickListener2;
+import com.example.rafael.testedevmobileandroid.interfaces.ItemClickListenerPostDetalhes;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
@@ -32,7 +32,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity implements MoPubView.BannerAdListener {
+public class MainActivity extends AppCompatActivity implements MoPubView.BannerAdListener{
 
     private PostService postService;
     private Post postBody;
@@ -46,48 +46,33 @@ public class MainActivity extends AppCompatActivity implements MoPubView.BannerA
     private SwipeRefreshLayout swipeRefreshLayout;
     private MoPubView moPubView;
     private FirebaseRemoteConfig mFirebaseRemoteConfig;
+    private String idMopub = "3418daeccb294098993d6be32e9ba1ab";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        criaToolbar();
 
         //Configura o moPub
         moPubView = findViewById(R.id.adview);
-        moPubView.setAdUnitId("3418daeccb294098993d6be32e9ba1ab");
+        moPubView.setAdUnitId(idMopub);
         moPubView.setBannerAdListener(this);
 
-        //Configura o Firebase
-        mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
-        mFirebaseRemoteConfig.setDefaults(R.xml.remote_config_defaults);
-
-        FirebaseRemoteConfigSettings configSettings =
-                new FirebaseRemoteConfigSettings.Builder()
-                .setDeveloperModeEnabled(BuildConfig.DEBUG).build();
-
-        mFirebaseRemoteConfig.setConfigSettings(configSettings);
-
+        configFirebase();
 
         checaPropaganda();
 
-        //Configração da Toolbar
-        mToolbar = (Toolbar) findViewById(R.id.tb_main);
-        mToolbar.setTitle("Tecnonutri Feed");
-        mToolbar.setTitleTextColor(getResources().getColor(R.color.colorAccent));
-        setSupportActionBar(mToolbar);
-
         //Configuração da anel de progresso
-        mProgressBar = (ProgressBar)findViewById(R.id.progressBar);
+        mProgressBar = findViewById(R.id.progressBar);
         mProgressBar.setVisibility(View.VISIBLE);
-
 
         context = this;
         postService = PostService.retrofit.create(PostService.class);
         refresh(postService);
 
-
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.simpleSwipeRefreshLayout);
+        swipeRefreshLayout = findViewById(R.id.simpleSwipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -111,15 +96,15 @@ public class MainActivity extends AppCompatActivity implements MoPubView.BannerA
 
                     //Configurando RecycleView
                     final RecyclerView recyclerView =  findViewById(R.id.recycler);
-                    adapter = new  PostAdapter(postBody.getItems(),context, chamaTela2(),chamaTela3());
-
+                    adapter = new  PostAdapter(postBody.getItems(),context, chamaTelaPostDetalhes(),chamaTelaProfile());
                     recyclerView.setAdapter(adapter);
                     LinearLayoutManager layout = new LinearLayoutManager(context,
                             LinearLayoutManager.VERTICAL, false);
                     recyclerView.setLayoutManager(layout);
 
                     //Configurando o Scrow Infinito
-                    EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(layout) {
+                    ListaSemFimRecyclerviewSrollListener scrollListener =
+                            new ListaSemFimRecyclerviewSrollListener(layout) {
                         @Override
                         public void onLoadMore(int page, int totalItemsCount, final RecyclerView view) {
                             mProgressBar.setVisibility(View.VISIBLE);
@@ -128,19 +113,28 @@ public class MainActivity extends AppCompatActivity implements MoPubView.BannerA
                                 @Override
                                 public void onResponse(Call<Post> call, Response<Post> response) {
 
-                                    novoPostBody = response.body();
-                                    postBody.getItems().addAll(novoPostBody.getItems());
+                                    if(response.isSuccessful()){
+                                        novoPostBody = response.body();
+                                        postBody.getItems().addAll(novoPostBody.getItems());
 
-                                    view.post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            adapter.notifyDataSetChanged();
+                                        view.post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                adapter.notifyDataSetChanged();
+                                            }
+                                        });
+                                        mProgressBar.setVisibility(View.GONE);
+                                    }else{
+                                        if(response.code() == 404){
+                                            mProgressBar.setVisibility(View.GONE);
+                                            msgErroEndpoit();
                                         }
-                                    });
-                                    mProgressBar.setVisibility(View.GONE);
+                                    }
                                 }
                                 @Override
                                 public void onFailure(Call<Post> call, Throwable t) {
+                                    mProgressBar.setVisibility(View.GONE);
+                                    msgFaltaConexao();
                                 }
                             });
                         }
@@ -148,21 +142,10 @@ public class MainActivity extends AppCompatActivity implements MoPubView.BannerA
                     swipeRefreshLayout.setRefreshing(false);
                     recyclerView.addOnScrollListener(scrollListener);
                 }
-                //Caso o endpoint nao seja encontrado, o usuario receberá uma mensagem
                 else{
-
                     if(response.code() == 404){
                         mProgressBar.setVisibility(View.GONE);
-                        AlertDialog.Builder msgBox = new AlertDialog.Builder(context);
-                        msgBox.setTitle("Não foi possivel carregar a lista de Games no momento.");
-
-                        msgBox.setPositiveButton("Voltar", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                finish();
-                            }
-                        });
-                        msgBox.show();
+                        msgErroEndpoit();
                     }
                 }
                 mProgressBar.setVisibility(View.GONE);
@@ -170,36 +153,18 @@ public class MainActivity extends AppCompatActivity implements MoPubView.BannerA
             @Override
             public void onFailure(Call<Post> call, Throwable t) {
 
-                //Caso não tenha conexão com a internet o usuario recebera uma mensage de erro de conexão
                 mProgressBar.setVisibility(View.GONE);
-                AlertDialog.Builder msgBox = new AlertDialog.Builder(context);
-                msgBox.setTitle("Falha na conexão com a Iternet");
-
-                msgBox.setPositiveButton("Voltar", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        finish();
-                    }
-                });
-                msgBox.show();
+                msgFaltaConexao();
             }
         });
-
-
     }
-
 
     @Override
     public void onBannerLoaded(MoPubView banner) {
-        Toast.makeText(getApplicationContext(),
-               "Banner successfully loaded.", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onBannerFailed(MoPubView banner, MoPubErrorCode errorCode) {
-        Toast.makeText(getApplicationContext(),
-                "Nao carregou.", Toast.LENGTH_SHORT).show();
-        Log.e("banner", errorCode.toString());
     }
 
     @Override
@@ -217,8 +182,57 @@ public class MainActivity extends AppCompatActivity implements MoPubView.BannerA
 
     }
 
+    //Configura o Firebase
+    public void configFirebase (){
+
+        mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
+        mFirebaseRemoteConfig.setDefaults(R.xml.remote_config_defaults);
+
+        FirebaseRemoteConfigSettings configSettings =
+                new FirebaseRemoteConfigSettings.Builder()
+                        .setDeveloperModeEnabled(BuildConfig.DEBUG).build();
+
+        mFirebaseRemoteConfig.setConfigSettings(configSettings);
+    }
+
+    //Função responsavel por criar a Toolbar
+    public void criaToolbar(){
+
+        mToolbar = findViewById(R.id.tb_main);
+        mToolbar.setTitle(R.string.feed);
+        mToolbar.setTitleTextColor(getResources().getColor(R.color.colorSecondytext));
+        setSupportActionBar(mToolbar);
+    }
+
+    //Caso não tenha conexão com a internet o usuario recebera uma mensage de erro de conexão
+    public void msgFaltaConexao(){
+        AlertDialog.Builder msgBox = new AlertDialog.Builder(context);
+        msgBox.setTitle(R.string.semInternet);
+        msgBox.setPositiveButton(R.string.fechar, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                finish();
+            }
+        });
+        msgBox.show();
+    }
+
+    //Caso o endpoint nao seja encontrado, o usuario receberá uma mensagem
+    public void msgErroEndpoit(){
+        AlertDialog.Builder msgBox = new AlertDialog.Builder(context);
+        msgBox.setTitle(R.string.erroEndpoint);
+
+        msgBox.setPositiveButton(R.string.fechar, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                finish();
+            }
+        });
+        msgBox.show();
+    }
+
     //Metodo que acessa a atividade da tela2, tela que apresenta os detalhes da refeição do usuario
-    public ItemClickListener chamaTela2(){
+    public ItemClickListener chamaTelaPostDetalhes(){
         ItemClickListener itemClickListener = new ItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
@@ -232,8 +246,8 @@ public class MainActivity extends AppCompatActivity implements MoPubView.BannerA
         return itemClickListener;
     }
 
-    public ItemClickListener2 chamaTela3(){
-        ItemClickListener2 itemClickListener2 = new ItemClickListener2() {
+    public ItemClickListenerPostDetalhes chamaTelaProfile(){
+        ItemClickListenerPostDetalhes itemClickListenerPostDetalhes = new ItemClickListenerPostDetalhes() {
             @Override
             public void onItemClick(View view, int position) {
                 Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
@@ -243,35 +257,27 @@ public class MainActivity extends AppCompatActivity implements MoPubView.BannerA
                 startActivity(intent);
             }
         };
-        return itemClickListener2;
+        return itemClickListenerPostDetalhes;
     }
 
     boolean prop;
     public void checaPropaganda(){
 
-        Log.i("FirebaseTeste","onStart chamado, buscando novos valores");
         mFirebaseRemoteConfig.fetch(0)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        if (!task.isSuccessful()) {
-                            Log.i("FirebaseTeste","Nao rolou " + task.toString());
-                        }
-                        else{
+                        if (task.isSuccessful()) {
                             mFirebaseRemoteConfig.activateFetched();
                             prop = mFirebaseRemoteConfig.getBoolean("props");
 
                             if(prop){
-
                                 moPubView.loadAd();
 
-                                Log.i("FirebaseTeste","Vai te propaganda.");
-                            }
-                            else {
-                                Log.i("FirebaseTeste","Não vai te propaganda.");
                             }
                         }
                     }
                 });
     }
+
 }

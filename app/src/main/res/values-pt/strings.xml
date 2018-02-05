@@ -1,5 +1,10 @@
 <resources>
-    <string name="app_name">TesteDevMobileAndroid</string>
+    <string name="app_name">Tecnonutri</string>
+    <string name="feed">Tecnonutri Feed</string>
+    <string name="semInternet">Sem conexão com a Internet</string>
+    <string name="erroEndpoint">Não foi possível carregar o feed</string>
+    <string name="fechar">Fechar</string>
+
     <string name="diaRefeicao">Refeição de </string>
     <string name="totalConsumido">Total consumido</string>
     <string name="kcal">Kcal </string>
