@@ -9,12 +9,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-/**
- * Created by rafael on 07/02/18.
- */
-
 public class PostDetalhePresenterImpl implements PostPresenter.PostDetalhePresenter {
-
 
     private PostRefeicao postRefeicaoBody;
     private PostView.PostViewDetalheActivity mPostViewDetalhes;

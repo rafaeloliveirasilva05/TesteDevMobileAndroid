@@ -12,10 +12,6 @@ import com.example.rafael.testedevmobileandroid.domain.domainDadosRefeicao.Foods
 import java.text.DecimalFormat;
 import java.util.List;
 
-/**
- * Created by rafael on 29/01/18.
- */
-
 public class AdapterItemAlimento extends BaseAdapter {
 
     private final List<Foods> foodsList;

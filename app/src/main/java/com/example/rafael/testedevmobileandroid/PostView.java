@@ -5,10 +5,6 @@ import com.example.rafael.testedevmobileandroid.domain.domainPost.Items;
 
 import java.util.List;
 
-/**
- * Created by rafael on 07/02/18.
- */
-
 public interface PostView {
 
 

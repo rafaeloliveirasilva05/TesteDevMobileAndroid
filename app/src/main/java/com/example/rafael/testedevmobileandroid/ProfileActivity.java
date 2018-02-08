@@ -19,7 +19,6 @@ import com.squareup.picasso.Picasso;
 
 public class ProfileActivity extends AppCompatActivity implements MoPubView.BannerAdListener{
 
-
     private MoPubView moPubView;
     private ImageView imgProfile;
     private FirebaseRemoteConfig mFirebaseRemoteConfig;

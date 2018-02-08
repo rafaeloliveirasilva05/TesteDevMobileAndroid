@@ -8,10 +8,6 @@ import com.example.rafael.testedevmobileandroid.domain.domainPost.Post;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-/**
- * Created by rafael on 07/02/18.
- */
-
 public class PostPresenterImpl implements PostPresenter.PostItemPresenter {
 
     private PostService postService;

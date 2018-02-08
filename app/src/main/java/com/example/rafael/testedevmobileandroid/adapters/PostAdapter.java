@@ -25,11 +25,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-
-/**
- * Created by rafael on 26/01/18.
- */
-
 public class PostAdapter extends RecyclerView.Adapter {
     private Context context;
     private List<Items> itemsList;
