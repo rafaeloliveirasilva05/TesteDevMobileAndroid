@@ -2,6 +2,7 @@ package com.example.rafael.testedevmobileandroid.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+
+import io.realm.Realm;
 
 public class PostAdapter extends RecyclerView.Adapter {
     private Context context;
@@ -86,6 +89,7 @@ public class PostAdapter extends RecyclerView.Adapter {
             holder.botaoCurtir.setImageResource(R.drawable.ic_fav_branco);
         }
 
+
         //Verifica se existe foto de profile
         if(itemsList.get(position).getProfile().getImage() != null){
             Picasso.with(context).load(itemsList.get(position).getProfile().getImage())
@@ -112,7 +116,6 @@ public class PostAdapter extends RecyclerView.Adapter {
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 if(itemsList.get(position).isCurtiu()){
                     itemsList.get(position).setCurtiu(false);
                 }

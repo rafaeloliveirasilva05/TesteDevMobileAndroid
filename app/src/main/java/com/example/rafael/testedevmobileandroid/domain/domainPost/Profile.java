@@ -2,11 +2,14 @@ package com.example.rafael.testedevmobileandroid.domain.domainPost;
 
 import java.io.Serializable;
 
+import io.realm.RealmModel;
+import io.realm.RealmObject;
+
 /**
  * Created by rafael on 25/01/18.
  */
 
-public class Profile implements Serializable{
+public class Profile extends RealmObject implements Serializable, RealmModel {
 
     private String id;
     private String image;
