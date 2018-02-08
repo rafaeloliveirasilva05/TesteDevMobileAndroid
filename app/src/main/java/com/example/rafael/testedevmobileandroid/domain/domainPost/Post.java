@@ -1,5 +1,7 @@
-package com.example.rafael.testedevmobileandroid.domain;
+package com.example.rafael.testedevmobileandroid.domain.domainPost;
 
+
+import com.example.rafael.testedevmobileandroid.domain.domainPost.Items;
 
 import java.io.Serializable;
 import java.util.List;

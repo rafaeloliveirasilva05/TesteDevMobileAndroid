@@ -1,4 +1,4 @@
-package com.example.rafael.testedevmobileandroid.domain;
+package com.example.rafael.testedevmobileandroid.domain.domainPost;
 
 import java.io.Serializable;
 

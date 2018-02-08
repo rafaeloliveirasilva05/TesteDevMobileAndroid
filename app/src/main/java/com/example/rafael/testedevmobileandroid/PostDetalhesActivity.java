@@ -20,11 +20,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.rafael.testedevmobileandroid.adapters.AdapterItemAlimento;
-import com.example.rafael.testedevmobileandroid.api.PostService;
-import com.example.rafael.testedevmobileandroid.domain.Items;
-import com.example.rafael.testedevmobileandroid.domain.dadosRefeicao.Foods;
-import com.example.rafael.testedevmobileandroid.domain.dadosRefeicao.ItemRefeicao;
-import com.example.rafael.testedevmobileandroid.domain.dadosRefeicao.PostRefeicao;
+import com.example.rafael.testedevmobileandroid.domain.domainDadosRefeicao.Foods;
+import com.example.rafael.testedevmobileandroid.domain.domainDadosRefeicao.ItemRefeicao;
+import com.example.rafael.testedevmobileandroid.domain.domainDadosRefeicao.PostRefeicao;
+import com.example.rafael.testedevmobileandroid.domain.domainPost.Items;
+import com.example.rafael.testedevmobileandroid.presenter.PostDetalhePresenterImpl;
+import com.example.rafael.testedevmobileandroid.presenter.PostPresenter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
@@ -42,11 +43,9 @@ import java.util.Date;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
-public class PostDetalhesActivity extends AppCompatActivity  implements MoPubView.BannerAdListener{
+public class PostDetalhesActivity extends AppCompatActivity  implements MoPubView.BannerAdListener ,
+ PostView.PostViewDetalheActivity{
 
     private TextView nome;
     private TextView objetivo;
@@ -56,36 +55,38 @@ public class PostDetalhesActivity extends AppCompatActivity  implements MoPubVie
     private TextView quantidadeGordTotal;
     private MoPubView moPubView;
     private Items items;
-    private Context context;
     private ImageView imgAlimento;
     private ProgressBar mProgressBar;
     private ImageButton imageButton;
-    private PostRefeicao postRefeicaoBody;
     private CircleImageView circleImageUsuario;
     private FirebaseRemoteConfig mFirebaseRemoteConfig;
-    private String idMopub = "3418daeccb294098993d6be32e9ba1ab";
+    private PostPresenter.PostDetalhePresenter mPostDetalhePresenter;
+    private Context context;
+    private Activity activity;
+
+    public static final String ID_MOPUB = "3418daeccb294098993d6be32e9ba1ab";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_detalhe);
 
-        context = this;
-        final Activity activity = this;
-
         Bundle bundle = getIntent().getExtras();
         items = (Items) bundle.getSerializable("items");
 
-        criaToolbar();
+        createToolbar();
+
+        context  = this;
+        activity = this;
 
         //Configura o moPub
         moPubView = findViewById(R.id.adview);
-        moPubView.setAdUnitId(idMopub);
+        moPubView.setAdUnitId(ID_MOPUB);
         moPubView.setBannerAdListener(this);
 
         configFirebase();
 
-        checaPropaganda();
+        checkAds();
 
         mProgressBar = findViewById(R.id.progressBarDetalhes);
         mProgressBar.setVisibility(View.VISIBLE);
@@ -100,66 +101,13 @@ public class PostDetalhesActivity extends AppCompatActivity  implements MoPubVie
         quantidadeProtTotal = findViewById(R.id.texProtQuantidadeTotal);
         quantidadeGordTotal = findViewById(R.id.texGordQuantidadeTotal);
 
-        PostService postService = PostService.retrofit.create(PostService.class);
-        Call<PostRefeicao> requestPost = postService.dadosRefeicao(items.getFeedHash());
-        requestPost.enqueue(new Callback<PostRefeicao>() {
-            @Override
-            public void onResponse(Call<PostRefeicao> call, Response<PostRefeicao> response) {
+        mPostDetalhePresenter = new PostDetalhePresenterImpl(this,items);
+        mPostDetalhePresenter.getPostDetail();
 
-                if(response.isSuccessful()){
-                    postRefeicaoBody = response.body();
-
-
-                    List<Foods> foods = postRefeicaoBody.item.foods;
-                    ItemRefeicao itemRefeicao = postRefeicaoBody.item;
-
-                    ListView listView = findViewById(R.id.listNomeRefeicao2);
-                    AdapterItemAlimento adapter = new AdapterItemAlimento(foods, activity);
-                    listView.setAdapter(adapter);
-                    setListViewHeightBasedOnChildren(listView);
-
-
-                    nome.setText(items.getProfile().getName());
-                    objetivo.setText(items.getProfile().getGeneral_goal());
-                    Picasso.with(context).load(items.getProfile().getImage()).into(circleImageUsuario);
-                    Picasso.with(context).load(items.getImage()).into(imgAlimento);
-                    imageButton = findViewById(R.id.btnCurtirDetalhes);
-
-
-                    DecimalFormat decimalFormat = new DecimalFormat("0");
-
-                    quantidadeCalTotal.setText(decimalFormat.
-                            format(Double.parseDouble(itemRefeicao.getEnergy())));
-                    quantidadeCarbTotal.setText(decimalFormat.
-                            format(Double.parseDouble(itemRefeicao.getCarbohydrate())));
-                    quantidadeProtTotal.setText(decimalFormat.
-                            format(Double.parseDouble(itemRefeicao.getProtein())));
-                    quantidadeGordTotal.setText(decimalFormat.
-                            format(Double.parseDouble(itemRefeicao.getFat())));
-
-                    checaFotoProfile(items);
-
-                    checaCurtidasPost();
-
-                }
-                else{
-                    if(response.code() == 404){
-                        mProgressBar.setVisibility(View.GONE);
-                        msgErroEndpoit();
-                    }
-                }
-            }
-            @Override
-            public void onFailure(Call<PostRefeicao> call, Throwable t) {
-
-                mProgressBar.setVisibility(View.GONE);
-                msgFaltaConexao();
-            }
-        });
     }
 
     //Verifica se existe foto de profile
-    public void checaFotoProfile(Items items){
+    public void photoProfileIsEmpty(Items items){
 
         if(items.getProfile().getImage() != null){
             Picasso.with(context).load(items.getProfile()
@@ -171,7 +119,7 @@ public class PostDetalhesActivity extends AppCompatActivity  implements MoPubVie
     }
 
     //Verifica se o post recebeu curtidas
-    public void checaCurtidasPost(){
+    public void checkLikesPost(){
 
         if(!items.isCurtiu()){
             imageButton.setImageResource(R.drawable.ic_fav_borda_branca);
@@ -210,9 +158,9 @@ public class PostDetalhesActivity extends AppCompatActivity  implements MoPubVie
     }
 
     //Função responsavel por criar a Toolbar
-    public void criaToolbar(){
+    public void createToolbar(){
 
-        String dataFormatada = formadaData(items.getDate());
+        String dataFormatada = formatDate(items.getDate());
 
         Toolbar mToolbar = findViewById(R.id.tb_main_detalhes);
         mToolbar.setTitle("");
@@ -226,7 +174,7 @@ public class PostDetalhesActivity extends AppCompatActivity  implements MoPubVie
     }
 
     //Função responsavel por marcar as publicações curtidas
-    public void curtirDetalhes(View view){
+    public void likeDetalhes(View view){
 
         if(items.isCurtiu()){
             imageButton.setImageResource(R.drawable.ic_fav_borda_branca);
@@ -240,7 +188,7 @@ public class PostDetalhesActivity extends AppCompatActivity  implements MoPubVie
         EventBus.getDefault().post(new BroadcastCurtidas(items.getId()));
     }
 
-    public void btnAcessaProfile(View view){
+    public void btnshowProfileScreen(View view){
         Intent intent = new Intent(PostDetalhesActivity.this, ProfileActivity.class);
         Bundle bundle = new Bundle();
         bundle.putSerializable("items2",items);
@@ -250,7 +198,7 @@ public class PostDetalhesActivity extends AppCompatActivity  implements MoPubVie
 
     }
 
-    public String formadaData(String datafor){
+    public String formatDate(String datafor){
 
         SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
         Date data = null;
@@ -279,6 +227,7 @@ public class PostDetalhesActivity extends AppCompatActivity  implements MoPubVie
     public void setListViewHeightBasedOnChildren(ListView listView) {
         AdapterItemAlimento listAdapter  = (AdapterItemAlimento) listView.getAdapter();
 
+
         if (listAdapter == null) {
             return;
         }
@@ -303,7 +252,7 @@ public class PostDetalhesActivity extends AppCompatActivity  implements MoPubVie
     }
 
     boolean prop;
-    public void checaPropaganda(){
+    public void checkAds(){
 
         mFirebaseRemoteConfig.fetch(0)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -335,29 +284,53 @@ public class PostDetalhesActivity extends AppCompatActivity  implements MoPubVie
     }
 
     @Override
-    public void onBannerLoaded(MoPubView banner) {
+    public void showPostDetail(PostRefeicao postRefeicaoBody) {
 
+        List<Foods> foods = postRefeicaoBody.item.foods;
+        ItemRefeicao itemRefeicao = postRefeicaoBody.item;
+
+        ListView listView = findViewById(R.id.listNomeRefeicao2);
+        AdapterItemAlimento adapter = new AdapterItemAlimento(foods, activity);
+        listView.setAdapter(adapter);
+        setListViewHeightBasedOnChildren(listView);
+
+
+        nome.setText(items.getProfile().getName());
+        objetivo.setText(items.getProfile().getGeneral_goal());
+        Picasso.with(context).load(items.getProfile().getImage()).into(circleImageUsuario);
+        Picasso.with(context).load(items.getImage()).into(imgAlimento);
+        imageButton = findViewById(R.id.btnCurtirDetalhes);
+
+        DecimalFormat decimalFormat = new DecimalFormat("0");
+
+        quantidadeCalTotal.setText(decimalFormat.
+                format(Double.parseDouble(itemRefeicao.getEnergy())));
+        quantidadeCarbTotal.setText(decimalFormat.
+                format(Double.parseDouble(itemRefeicao.getCarbohydrate())));
+        quantidadeProtTotal.setText(decimalFormat.
+                format(Double.parseDouble(itemRefeicao.getProtein())));
+        quantidadeGordTotal.setText(decimalFormat.
+                format(Double.parseDouble(itemRefeicao.getFat())));
+
+        photoProfileIsEmpty(items);
+
+        checkLikesPost();
     }
 
     @Override
-    public void onBannerFailed(MoPubView banner, MoPubErrorCode errorCode) {
-
-    }
+    public void onBannerLoaded(MoPubView banner) {}
 
     @Override
-    public void onBannerClicked(MoPubView banner) {
-
-    }
+    public void onBannerFailed(MoPubView banner, MoPubErrorCode errorCode) {}
 
     @Override
-    public void onBannerExpanded(MoPubView banner) {
-
-    }
+    public void onBannerClicked(MoPubView banner) {}
 
     @Override
-    public void onBannerCollapsed(MoPubView banner) {
+    public void onBannerExpanded(MoPubView banner) {}
 
-    }
+    @Override
+    public void onBannerCollapsed(MoPubView banner) {}
 }
 
 

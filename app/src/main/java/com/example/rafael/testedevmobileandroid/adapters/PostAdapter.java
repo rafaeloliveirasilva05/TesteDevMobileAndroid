@@ -11,7 +11,7 @@ import android.widget.RelativeLayout;
 import com.example.rafael.testedevmobileandroid.BroadcastCurtidas;
 import com.example.rafael.testedevmobileandroid.MyViewHolder;
 import com.example.rafael.testedevmobileandroid.R;
-import com.example.rafael.testedevmobileandroid.domain.Items;
+import com.example.rafael.testedevmobileandroid.domain.domainPost.Items;
 import com.example.rafael.testedevmobileandroid.interfaces.ItemClickListener;
 import com.example.rafael.testedevmobileandroid.interfaces.ItemClickListenerPostDetalhes;
 import com.squareup.picasso.Picasso;

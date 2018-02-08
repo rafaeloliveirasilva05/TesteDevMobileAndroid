@@ -4,12 +4,11 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.rafael.testedevmobileandroid.domain.Items;
+import com.example.rafael.testedevmobileandroid.domain.domainPost.Items;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
@@ -20,43 +19,51 @@ import com.squareup.picasso.Picasso;
 
 public class ProfileActivity extends AppCompatActivity implements MoPubView.BannerAdListener{
 
-    private Items items;
-    private TextView nomeProfile;
-    private ImageView imgProfile;
-    private Toolbar mToolbar;
-    private FirebaseRemoteConfig mFirebaseRemoteConfig;
-    private String idMopub = "3418daeccb294098993d6be32e9ba1ab";
+
     private MoPubView moPubView;
+    private ImageView imgProfile;
+    private FirebaseRemoteConfig mFirebaseRemoteConfig;
+    public static final String ID_MOPUB = "3418daeccb294098993d6be32e9ba1ab";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        mToolbar = findViewById(R.id.tb_main_profile);
-        mToolbar.setTitle("");
-        setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
+        createToolbar();
 
         Bundle bundle = getIntent().getExtras();
-        items =(Items) bundle.getSerializable("items2");
+        Items items = (Items) bundle.getSerializable("items2");
 
         //Configura o moPub
         moPubView = findViewById(R.id.adviewProfile);
-        moPubView.setAdUnitId(idMopub);
+        moPubView.setAdUnitId(ID_MOPUB);
         moPubView.setBannerAdListener(this);
 
         configFirebase();
 
-        checaPropaganda();
+        checkAds();
 
-        nomeProfile = findViewById(R.id.texNomeProfile);
-        imgProfile = findViewById(R.id.imgProfile);
-
+        TextView nomeProfile = findViewById(R.id.texNomeProfile);
         nomeProfile.setText(items.getProfile().getName());
 
-        //Verifica se existe foto de profile
+        imgProfile = findViewById(R.id.imgProfile);
+
+        photoProfileIsEmpty(items);
+
+    }
+
+    private void createToolbar() {
+        Toolbar mToolbar = findViewById(R.id.tb_main_profile);
+        mToolbar.setTitle("");
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+    }
+
+    //Verifica se existe foto de profile
+    public void photoProfileIsEmpty(Items items){
+
         if(items.getProfile().getImage() != null){
             Picasso.with(this).load(items.getProfile().getImage()).into(imgProfile);
         }
@@ -64,17 +71,9 @@ public class ProfileActivity extends AppCompatActivity implements MoPubView.Bann
             imgProfile.setImageResource(R.drawable.sem_imagem_avatar);
         }
     }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if(id == android.R.id.home){
-            finish();
-        }
-        return true;
-    }
 
     boolean prop;
-    public void checaPropaganda(){
+    public void checkAds(){
 
         mFirebaseRemoteConfig.fetch(0)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -105,30 +104,27 @@ public class ProfileActivity extends AppCompatActivity implements MoPubView.Bann
         mFirebaseRemoteConfig.setConfigSettings(configSettings);
     }
 
-
-
     @Override
-    public void onBannerLoaded(MoPubView banner) {
-
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if(id == android.R.id.home){
+            finish();
+        }
+        return true;
     }
 
     @Override
-    public void onBannerFailed(MoPubView banner, MoPubErrorCode errorCode) {
-
-    }
+    public void onBannerLoaded(MoPubView banner) {}
 
     @Override
-    public void onBannerClicked(MoPubView banner) {
-
-    }
+    public void onBannerFailed(MoPubView banner, MoPubErrorCode errorCode) {}
 
     @Override
-    public void onBannerExpanded(MoPubView banner) {
-
-    }
+    public void onBannerClicked(MoPubView banner) {}
 
     @Override
-    public void onBannerCollapsed(MoPubView banner) {
+    public void onBannerExpanded(MoPubView banner) {}
 
-    }
+    @Override
+    public void onBannerCollapsed(MoPubView banner) {}
 }

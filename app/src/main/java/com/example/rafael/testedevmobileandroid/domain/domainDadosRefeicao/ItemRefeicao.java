@@ -1,4 +1,4 @@
-package com.example.rafael.testedevmobileandroid.domain.dadosRefeicao;
+package com.example.rafael.testedevmobileandroid.domain.domainDadosRefeicao;
 
 import java.util.List;
 

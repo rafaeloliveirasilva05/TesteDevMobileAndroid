@@ -9,7 +9,7 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
  * Created by rafael on 27/01/18.
  */
 
-public abstract class ListaSemFimRecyclerviewSrollListener extends RecyclerView.OnScrollListener{
+public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnScrollListener{
 
     private int visibleThreshold = 5;
     private int currentPage = 0;
@@ -19,16 +19,16 @@ public abstract class ListaSemFimRecyclerviewSrollListener extends RecyclerView.
 
     RecyclerView.LayoutManager mLayoutManager;
 
-    public ListaSemFimRecyclerviewSrollListener(LinearLayoutManager layoutManager) {
+    public EndlessRecyclerViewScrollListener(LinearLayoutManager layoutManager) {
         this.mLayoutManager = layoutManager;
     }
 
-    public ListaSemFimRecyclerviewSrollListener(GridLayoutManager layoutManager) {
+    public EndlessRecyclerViewScrollListener(GridLayoutManager layoutManager) {
         this.mLayoutManager = layoutManager;
         visibleThreshold = visibleThreshold * layoutManager.getSpanCount();
     }
 
-    public ListaSemFimRecyclerviewSrollListener(StaggeredGridLayoutManager layoutManager) {
+    public EndlessRecyclerViewScrollListener(StaggeredGridLayoutManager layoutManager) {
         this.mLayoutManager = layoutManager;
         visibleThreshold = visibleThreshold * layoutManager.getSpanCount();
     }

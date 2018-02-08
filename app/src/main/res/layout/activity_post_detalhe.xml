@@ -76,7 +76,7 @@
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
                 android:paddingTop="16dp"
-                android:onClick="btnAcessaProfile">
+                android:onClick="btnshowProfileScreen">
 
 
                 <de.hdodenhof.circleimageview.CircleImageView
@@ -126,7 +126,7 @@
                 android:layout_marginBottom="8dp"
                 android:layout_marginEnd="16dp"
                 android:background="@xml/round_shape"
-                android:onClick="curtirDetalhes"
+                android:onClick="likeDetalhes"
                 android:padding="12dp"
                 app:layout_constraintBottom_toBottomOf="@+id/person_photo2"
                 app:layout_constraintEnd_toEndOf="parent" />

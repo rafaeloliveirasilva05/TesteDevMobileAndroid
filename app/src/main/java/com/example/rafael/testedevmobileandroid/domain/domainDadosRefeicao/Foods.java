@@ -1,4 +1,4 @@
-package com.example.rafael.testedevmobileandroid.domain.dadosRefeicao;
+package com.example.rafael.testedevmobileandroid.domain.domainDadosRefeicao;
 
 /**
  * Created by rafael on 28/01/18.

@@ -1,7 +1,7 @@
 package com.example.rafael.testedevmobileandroid.api;
 
-import com.example.rafael.testedevmobileandroid.domain.Post;
-import com.example.rafael.testedevmobileandroid.domain.dadosRefeicao.PostRefeicao;
+import com.example.rafael.testedevmobileandroid.domain.domainPost.Post;
+import com.example.rafael.testedevmobileandroid.domain.domainDadosRefeicao.PostRefeicao;
 
 import retrofit2.Call;
 import retrofit2.Retrofit;

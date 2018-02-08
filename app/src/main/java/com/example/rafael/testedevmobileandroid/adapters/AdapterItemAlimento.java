@@ -7,7 +7,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.example.rafael.testedevmobileandroid.R;
-import com.example.rafael.testedevmobileandroid.domain.dadosRefeicao.Foods;
+import com.example.rafael.testedevmobileandroid.domain.domainDadosRefeicao.Foods;
 
 import java.text.DecimalFormat;
 import java.util.List;
